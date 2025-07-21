@@ -56,3 +56,4 @@ function isPrimeAsyncPromise(num) {
 isPrimeAsyncPromise(11)
   .then(result => console.log("Promise isPrimeAsyncPromise(11):", result))
   .catch(err => console.error(err));
+ 

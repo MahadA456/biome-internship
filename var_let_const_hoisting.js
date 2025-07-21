@@ -1,13 +1,13 @@
 // Task 1: var vs let/const and Hoisting Pitfalls
 
 console.log("---- Example 1: var hoisting ----");
-console.log(x); // What will this output?undefined
+console.log(x); //undefined
 var x = 5;
 console.log(x);
 
 console.log("\n---- Example 2: let hoisting ----");
 try {
-  console.log(y); // What will happen here?wont access before initialization
+  console.log(y); //wont access before initialization
 } catch (e) {
   console.log("Error:", e.message);
 }
@@ -16,7 +16,7 @@ console.log(y);
 
 console.log("\n---- Example 3: const hoisting ----");
 try {
-  console.log(z); // What will happen here? wont access z before initialization
+  console.log(z); //wont access z before initialization
 } catch (e) {
   console.log("Error:", e.message);
 }
@@ -25,7 +25,7 @@ console.log(z);
 
 console.log("\n---- Example 4: var inside function hoisting ----");
 function testVarHoist() {
-  console.log(a); // ?undefined
+  console.log(a); //undefined
   var a = 20;
   console.log(a);
 }
@@ -34,7 +34,7 @@ testVarHoist();
 console.log("\n---- Example 5: let inside block scope ----");
 {
   try {
-    console.log(b); // ?wont access b before initialization
+    console.log(b); //wont access b before initialization
   } catch (e) {
     console.log("Error:", e.message);
   }
@@ -50,7 +50,7 @@ console.log(c);// 2
 console.log("\n---- Example 7: let redeclaration ----");
 let d = 3;
 try {
-  let d = 4; // Can we redeclare let variable in the same scope?
+  let d = 4;
 } catch (e) {
   console.log("Error:", e.message);
 }
