@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Simple To-Do List</title>
+  <title>Simple To-Do List with Flexbox</title>
   <style>
-    /* Reset some default styles */
+    /* Reset and base styles */
     * {
       box-sizing: border-box;
     }
@@ -17,8 +17,8 @@
       max-width: 420px;
       margin: 40px auto;
       color: #333;
-      -webkit-user-select: none;
-      -webkit-user-select: none;
+
+      -webkit-user-select: none; /* Safari 3+, iOS Safari 3+ */
       user-select: none;
     }
 
@@ -70,16 +70,19 @@
       list-style: none;
     }
 
+    /* Flexbox for each list item */
     li {
       background: white;
       padding: 14px 18px;
       margin-bottom: 12px;
       border-radius: 12px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       transition: box-shadow 0.3s ease;
+      gap: 10px;
     }
 
     li:hover {
@@ -91,21 +94,24 @@
       box-shadow: 0 6px 14px rgba(41, 128, 185, 0.3);
     }
 
+    /* Text container: allow text to grow and wrap */
     li span {
-      flex: 1;
+      flex: 1 1 auto;
       font-size: 17px;
       word-break: break-word;
       color: #2c3e50;
+      min-width: 0; /* fix for flex items with overflow */
     }
 
     li.editing input {
-      flex: 1;
+      flex: 1 1 auto;
       padding: 8px 12px;
       font-size: 16px;
       border: 2px solid #3498db;
       border-radius: 8px;
       outline: none;
       transition: border-color 0.3s ease;
+      min-width: 0;
     }
 
     li.editing input:focus {
@@ -113,11 +119,17 @@
       box-shadow: 0 0 8px #2980b9aa;
     }
 
+    /* Container for buttons: flex layout with small gap */
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0; /* prevent shrinking */
+    }
+
     button {
       background: #ecf0f1;
       border: none;
       padding: 7px 14px;
-      margin-left: 10px;
       border-radius: 24px;
       cursor: pointer;
       font-weight: 600;
@@ -125,6 +137,8 @@
       box-shadow: 0 3px 6px rgba(0,0,0,0.1);
       transition: background 0.25s ease, color 0.25s ease;
       user-select: none;
+      min-width: 70px;
+      text-align: center;
     }
 
     button:hover {
@@ -147,7 +161,7 @@
       button {
         padding: 6px 12px;
         font-size: 14px;
-        margin-left: 8px;
+        min-width: 60px;
       }
     }
   </style>
@@ -194,29 +208,42 @@
       span.textContent = text;
       li.appendChild(span);
 
+      // Buttons container
+      const btnGroup = document.createElement('div');
+      btnGroup.className = 'btn-group';
+
       // Edit button
       const editBtn = document.createElement('button');
       editBtn.textContent = 'Edit';
       editBtn.setAttribute('aria-label', 'Edit task');
-      li.appendChild(editBtn);
+      btnGroup.appendChild(editBtn);
 
       // Delete button
       const delBtn = document.createElement('button');
       delBtn.textContent = 'Delete';
       delBtn.setAttribute('aria-label', 'Delete task');
-      li.appendChild(delBtn);
+      btnGroup.appendChild(delBtn);
+
+      li.appendChild(btnGroup);
 
       // Edit logic
       editBtn.addEventListener('click', () => {
         if (li.classList.contains('editing')) {
           // Save edited text
           try {
-            const newText = li.querySelector('input').value.trim();
+            const inputEdit = li.querySelector('input');
+            if (!inputEdit) throw new Error('Edit input not found');
+            const newText = inputEdit.value.trim();
             if (!newText) throw new Error('Task cannot be empty');
             if (/\d/.test(newText)) throw new Error('Task cannot contain numbers');
+
             span.textContent = newText;
             li.classList.remove('editing');
             editBtn.textContent = 'Edit';
+
+            // Remove input and restore span display
+            li.insertBefore(span, inputEdit);
+            li.removeChild(inputEdit);
           } catch (err) {
             alert('Error: ' + err.message);
           }
@@ -224,9 +251,10 @@
           // Switch to edit mode
           const inputEdit = document.createElement('input');
           inputEdit.type = 'text';
-          inputEdit.value = span.textContent;
+          inputEdit.value = span.textContent || '';
           li.insertBefore(inputEdit, span);
           li.removeChild(span);
+
           li.classList.add('editing');
           editBtn.textContent = 'Save';
           inputEdit.focus();
